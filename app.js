@@ -178,7 +178,7 @@ revealElements.forEach(el => {
 
 });
 
-if (!prefersReduced) {
+if (!prefersReduced && !isTouch) {
 
   const heroBg = document.getElementById('heroBg');
 
