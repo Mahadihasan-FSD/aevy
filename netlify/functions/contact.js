@@ -1,16 +1,22 @@
 const nodemailer = require("nodemailer");
 const admin = require("firebase-admin");
 
-if (!admin.apps.length) {
+try {
 
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-    })
-  });
+  if (!admin.apps.length) {
 
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+      })
+    });
+
+  }
+
+} catch (err) {
+  console.log("Firebase Init Error:", err);
 }
 
 const db = admin.firestore();
@@ -19,7 +25,10 @@ exports.handler = async (event) => {
 
   try {
 
-    const { email, message } = JSON.parse(event.body);
+    const data = JSON.parse(event.body);
+
+    const email = data.email;
+    const message = data.message;
 
     await db.collection("messages").add({
       email,
@@ -38,14 +47,10 @@ exports.handler = async (event) => {
     await transporter.sendMail({
       from: process.env.EMAIL,
       to: "contract.aevy@gmail.com",
-      subject: `New message from ${email}`,
+      subject: "New AEVY Contact",
       html: `
-        <h2>New Contact Message</h2>
-
-        <p><strong>Email:</strong> ${email}</p>
-
-        <p><strong>Message:</strong></p>
-
+        <h2>New Message</h2>
+        <p><b>Email:</b> ${email}</p>
         <p>${message}</p>
       `
     });
@@ -58,6 +63,8 @@ exports.handler = async (event) => {
     };
 
   } catch (err) {
+
+    console.log("FUNCTION ERROR:", err);
 
     return {
       statusCode: 500,
