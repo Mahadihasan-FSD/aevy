@@ -38,16 +38,21 @@ exports.handler = async (event) => {
       }
     });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL,
-      to: "contract.aevy@gmail.com",
-      subject: "New AEVY Contact",
-      html: `
-        <h2>New Message</h2>
-        <p><b>Email:</b> ${email}</p>
-        <p>${message}</p>
-      `
-    });
+await transporter.sendMail({
+  from: process.env.EMAIL,
+  to: "contract.aevy@gmail.com",
+  replyTo: email,
+  subject: "New AEVY Contact",
+  html: `
+    <h2>New Message</h2>
+
+    <p><strong>Sender Email:</strong> ${email}</p>
+
+    <p><strong>Message:</strong></p>
+
+    <p>${message}</p>
+  `
+});
 
     return {
       statusCode: 200,
