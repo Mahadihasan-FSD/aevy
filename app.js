@@ -4,6 +4,10 @@ import {
   addDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/* =========================================
+   PREMIUM POPUP
+========================================= */
+
 function showPopup(message, type = "success") {
 
   const popup = document.createElement("div");
@@ -34,9 +38,9 @@ function showPopup(message, type = "success") {
 
   document.body.appendChild(popup);
 
-  setTimeout(() => {
+  requestAnimationFrame(() => {
     popup.classList.add("show");
-  }, 10);
+  });
 
   setTimeout(() => {
 
@@ -47,7 +51,12 @@ function showPopup(message, type = "success") {
     }, 400);
 
   }, 4000);
+
 }
+
+/* =========================================
+   CONTACT FORM
+========================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -115,72 +124,112 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+/* =========================================
+   ICONS
+========================================= */
+
 if (typeof lucide !== 'undefined' && lucide.createIcons) {
   lucide.createIcons();
 }
 
-const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isTouch = matchMedia('(pointer: coarse)').matches;
+/* =========================================
+   DEVICE DETECTION
+========================================= */
 
-const sections = document.querySelectorAll('.cinema-section');
-const cards = document.querySelectorAll('.card');
-const revealElements = document.querySelectorAll('.reveal');
+const prefersReduced =
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const sectionObserver = new IntersectionObserver((entries) => {
+const isTouch =
+  window.matchMedia('(pointer: coarse)').matches;
 
-  entries.forEach(entry => {
+/* =========================================
+   OBSERVERS
+========================================= */
 
-    if (entry.isIntersecting) {
-      entry.target.classList.add('revealed');
-    }
+const sections =
+  document.querySelectorAll('.cinema-section');
 
-  });
+const cards =
+  document.querySelectorAll('.card');
 
-}, {
-  threshold: 0.2,
-  rootMargin: '0px 0px -10% 0px'
-});
+const revealElements =
+  document.querySelectorAll('.reveal');
 
-sections.forEach(section => sectionObserver.observe(section));
+/* SECTION OBSERVER */
 
-const cardObserver = new IntersectionObserver((entries) => {
+const sectionObserver =
+  new IntersectionObserver((entries) => {
 
-  entries.forEach(e => {
+    entries.forEach(entry => {
 
-    if (e.isIntersecting)
-      e.target.classList.add('in-view');
-
-  });
-
-}, {
-  threshold: 0.2,
-  rootMargin: '0px 0px -5% 0px'
-});
-
-cards.forEach(card => cardObserver.observe(card));
-
-revealElements.forEach(el => {
-
-  const obs = new IntersectionObserver((entries) => {
-
-    entries.forEach(e => {
-
-      if (e.isIntersecting)
-        e.target.classList.add('show');
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+      }
 
     });
 
   }, {
-    threshold: 0.15
+    threshold: 0.08,
+    rootMargin: '0px'
   });
+
+sections.forEach(section =>
+  sectionObserver.observe(section)
+);
+
+/* CARD OBSERVER */
+
+const cardObserver =
+  new IntersectionObserver((entries) => {
+
+    entries.forEach(e => {
+
+      if (e.isIntersecting) {
+        e.target.classList.add('in-view');
+      }
+
+    });
+
+  }, {
+    threshold: 0.08,
+    rootMargin: '0px'
+  });
+
+cards.forEach(card =>
+  cardObserver.observe(card)
+);
+
+/* REVEAL OBSERVER */
+
+revealElements.forEach(el => {
+
+  const obs =
+    new IntersectionObserver((entries) => {
+
+      entries.forEach(e => {
+
+        if (e.isIntersecting) {
+          e.target.classList.add('show');
+        }
+
+      });
+
+    }, {
+      threshold: 0.05
+    });
 
   obs.observe(el);
 
 });
 
+/* =========================================
+   PARALLAX SYSTEM
+========================================= */
+
 if (!prefersReduced && !isTouch) {
 
-  const heroBg = document.getElementById('heroBg');
+  const heroBg =
+    document.getElementById('heroBg');
 
   const fogEls = [
     document.getElementById('fog1'),
@@ -206,21 +255,29 @@ if (!prefersReduced && !isTouch) {
       y / (document.body.scrollHeight - h)
     );
 
-    if (heroBg)
+    if (heroBg) {
+
       heroBg.style.transform =
         `translate3d(0, ${y * 0.05}px, 0)
          scale(${1 + progress * 0.02})`;
+
+    }
 
     fogEls.forEach((fog, i) => {
 
       if (fog) {
 
         const dx =
-          (mouse.x - 0.5) * 28 * (i + 1) * 0.6;
+          (mouse.x - 0.5) *
+          28 *
+          (i + 1) *
+          0.6;
 
         const dy =
-          (mouse.y - 0.5) * 22 +
-          y * (0.03 + i * 0.008);
+          (mouse.y - 0.5) *
+          22 +
+          y *
+          (0.03 + i * 0.008);
 
         fog.style.transform =
           `translate3d(${dx}px, ${dy}px, 0)`;
@@ -234,6 +291,8 @@ if (!prefersReduced && !isTouch) {
     ticking = false;
 
   };
+
+  /* SCROLL */
 
   window.addEventListener('scroll', () => {
 
@@ -249,17 +308,23 @@ if (!prefersReduced && !isTouch) {
     passive: true
   });
 
+  /* MOUSE MOVE */
+
   window.addEventListener('mousemove', (e) => {
 
-    if (!isTouch) {
+    mouse.x = e.clientX / innerWidth;
+    mouse.y = e.clientY / innerHeight;
 
-      mouse.x = e.clientX / innerWidth;
-      mouse.y = e.clientY / innerHeight;
+    if (!ticking) {
 
-      updateParallax();
+      ticking = true;
+
+      requestAnimationFrame(updateParallax);
 
     }
 
+  }, {
+    passive: true
   });
 
   updateParallax();
@@ -280,6 +345,10 @@ if (!prefersReduced && !isTouch) {
 
 }
 
+/* =========================================
+   HERO TITLE
+========================================= */
+
 const splitTitle = (el) => {
 
   if (!el) return;
@@ -288,20 +357,30 @@ const splitTitle = (el) => {
 
   el.innerHTML =
     `<span class="split-line">
-       <span>${text}</span>
-     </span>`;
+      <span>${text}</span>
+    </span>`;
 
 };
 
-splitTitle(document.getElementById('heroTitle'));
+if (!isTouch) {
+  splitTitle(
+    document.getElementById('heroTitle')
+  );
+}
 
-const contactForm = document.querySelector('.newsletter-form');
+/* =========================================
+   NEWSLETTER BUTTON
+========================================= */
+
+const contactForm =
+  document.querySelector('.newsletter-form');
 
 if (contactForm) {
 
   contactForm.addEventListener('submit', () => {
 
-    const btn = contactForm.querySelector('button');
+    const btn =
+      contactForm.querySelector('button');
 
     btn.innerHTML = 'Sending...';
 
