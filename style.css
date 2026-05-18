@@ -779,3 +779,137 @@ body {
   }
 
 }
+
+/* =========================================
+   MOBILE PERFORMANCE OPTIMIZATION
+========================================= */
+
+@media (max-width: 768px) {
+
+  html,
+  body {
+
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+
+  }
+
+  /* HEAVY BLUR REDUCTION */
+
+  .glass,
+  .atmo-card,
+  .popup {
+
+    backdrop-filter: blur(8px) !important;
+  }
+
+  /* REMOVE EXPENSIVE FILTER ANIMATIONS */
+
+  .card,
+  .cinema-section {
+
+    filter: none !important;
+  }
+
+  .card.in-view,
+  .cinema-section.revealed {
+
+    filter: none !important;
+  }
+
+  /* LIGHTER TRANSITIONS */
+
+  .card,
+  .cinema-section,
+  .atmo-card,
+  .social-link,
+  #contactForm button {
+
+    transition:
+      transform 0.35s ease,
+      opacity 0.35s ease !important;
+  }
+
+  /* REMOVE HEAVY BOX SHADOWS */
+
+  .glass,
+  .atmo-card,
+  .popup,
+  #contactForm button {
+
+    box-shadow:
+      0 6px 18px rgba(0,0,0,0.18) !important;
+  }
+
+  /* DISABLE GRAIN OVERLAY */
+
+  .grain:before {
+
+    display: none !important;
+  }
+
+  /* LIGHTER FOG */
+
+  .fog {
+
+    filter: blur(8px) !important;
+    opacity: 0.12 !important;
+  }
+
+  /* REMOVE HOVER TRANSFORMS */
+
+  .atmo-card:hover,
+  .social-link:hover,
+  #contactForm button:hover {
+
+    transform: none !important;
+  }
+
+  /* DISABLE TEXT SHIMMER ANIMATION */
+
+  .text-sheen {
+
+    animation: none !important;
+    background-size: 100% 100%;
+  }
+
+  /* DISABLE MARQUEE */
+
+  .marquee {
+
+    animation: none !important;
+  }
+
+  /* LIGHTER SCROLL ANIMATION */
+
+  .card {
+
+    transform: translateY(12px) scale(0.99);
+    opacity: 0;
+  }
+
+  .cinema-section {
+
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  /* FORCE GPU ACCELERATION */
+
+  .card,
+  .cinema-section,
+  .fog,
+  .popup {
+
+    will-change: auto;
+    transform: translateZ(0);
+  }
+
+  /* BETTER TOUCH PERFORMANCE */
+
+  * {
+
+    -webkit-tap-highlight-color: transparent;
+  }
+
+}
